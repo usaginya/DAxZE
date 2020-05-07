@@ -62,7 +62,7 @@ namespace DAxZE
                 timerCheckStatic.Close();
                 timerCheckStatic = null;
             }
-            else if (missCount > 6)
+            else if (missCount > 7)
             {
                 State = RecviceState.Waiting;
             }
@@ -94,8 +94,8 @@ namespace DAxZE
 
                     if (recviceRemoteThread != null && recviceLocalThread != null)
                     {
-                        recviceDelay = recviceDelay == 2 ? 100 : recviceDelay;
-                        if(missCount > 6)
+                        recviceDelay = recviceDelay == 2 ? 8 : recviceDelay;
+                        if(missCount > 7)
                         {
                             initCount = missCount = 0;
                         }
@@ -153,6 +153,7 @@ namespace DAxZE
         {
             while (runRemoteThread)
             {
+                Thread.Sleep(recviceDelay);
                 try
                 {
                     byte[] data = remoteClient.Receive(ref remotePoint);
@@ -162,20 +163,16 @@ namespace DAxZE
                         missCount = 0;
                         localClient.Send(data, data.Length, localPoint);
 
-                        if (initCount < 16)
+                        if (initCount < 7)
                         {
                             initCount++;
-                        }
-
-                        if (initCount > 15)
+                        }else
                         {
                             recviceDelay = 1;
                         }
                     }
                 }
                 catch { }
-
-                Thread.Sleep(recviceDelay);
             }
         }
 
@@ -186,26 +183,18 @@ namespace DAxZE
         {
             while (runLocalThread)
             {
+                Thread.Sleep(recviceDelay);
                 try
                 {
                     byte[] data = localClient.Receive(ref localPoint);
                     if (data.Length > 0)
                     {
+                        missCount = 0;
                         SendToRemote(data);
 
-                        if (initCount < 16)
-                        {
-                            initCount++;
-                        }
-
-                        if (initCount > 15)
-                        {
-                            recviceDelay = 1;
-                        }
                     }
                 }
                 catch { }
-                Thread.Sleep(recviceDelay);
             }
         }
 

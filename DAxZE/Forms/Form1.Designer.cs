@@ -40,6 +40,7 @@
             this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
             this.MetroTextBoxzCPort = new MetroFramework.Controls.MetroTextBox();
             this.metroButtonCPort = new MetroFramework.Controls.MetroButton();
+            this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,6 +59,7 @@
             // 
             this.metroComboBox1.DropDownWidth = 174;
             this.metroComboBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.metroComboBox1.ForeColor = System.Drawing.Color.Black;
             this.metroComboBox1.FormattingEnabled = true;
             this.metroComboBox1.ItemHeight = 23;
             this.metroComboBox1.Items.AddRange(new object[] {
@@ -131,6 +133,7 @@
             this.metroButton1.UseCustomBackColor = true;
             this.metroButton1.UseCustomForeColor = true;
             this.metroButton1.UseSelectable = true;
+            this.metroButton1.UseStyleColors = true;
             this.metroButton1.Click += new System.EventHandler(this.MetroButton1_Click);
             // 
             // MetroLabelState
@@ -229,13 +232,30 @@
             this.metroButtonCPort.Text = "更 改";
             this.metroButtonCPort.UseCustomForeColor = true;
             this.metroButtonCPort.UseSelectable = true;
+            this.metroButtonCPort.UseStyleColors = true;
             this.metroButtonCPort.Click += new System.EventHandler(this.MetroButtonCPort_Click);
+            // 
+            // metroLabel4
+            // 
+            this.metroLabel4.AutoSize = true;
+            this.metroLabel4.Cursor = System.Windows.Forms.Cursors.Help;
+            this.metroLabel4.FontSize = MetroFramework.MetroLabelSize.Tall;
+            this.metroLabel4.Location = new System.Drawing.Point(113, 25);
+            this.metroLabel4.Name = "metroLabel4";
+            this.metroLabel4.Size = new System.Drawing.Size(61, 25);
+            this.metroLabel4.Style = MetroFramework.MetroColorStyle.Magenta;
+            this.metroLabel4.TabIndex = 11;
+            this.metroLabel4.Text = "by YIU";
+            this.metroLabel4.UseCustomForeColor = true;
+            this.metroLabel4.UseStyleColors = true;
+            this.metroLabel4.Click += new System.EventHandler(this.MetroLabel4_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(560, 307);
+            this.Controls.Add(this.metroLabel4);
             this.Controls.Add(this.metroButtonCPort);
             this.Controls.Add(this.MetroTextBoxzCPort);
             this.Controls.Add(this.metroLabel3);
@@ -256,7 +276,7 @@
             this.Resizable = false;
             this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Style = MetroFramework.MetroColorStyle.Magenta;
-            this.Text = "DA☆ZE v1.1 by YIU";
+            this.Text = "DA☆ZE  ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -277,6 +297,7 @@
         internal MetroFramework.Controls.MetroTextBox MetroTextBoxzCPort;
         internal MetroFramework.Controls.MetroButton metroButtonCPort;
         internal MetroFramework.Controls.MetroComboBox metroComboBox1;
+        private MetroFramework.Controls.MetroLabel metroLabel4;
     }
 }
 

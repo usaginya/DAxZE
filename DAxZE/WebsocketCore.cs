@@ -70,7 +70,7 @@ namespace DAxZE
                 localPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), Local_port);
 
                 webSocket = new WebSocket($"wss://{Form1.serverName}", null, null, null,
-                    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) mycard/3.0.36 Chrome/69.0.3497.128 Electron/4.0.7 Safari/537.36"
+                    $"{Form1.AppName}/{Form1.AppVersion}"
                     );
                 webSocket.Opened += new EventHandler(Websocket_Opened);
                 webSocket.Error += new EventHandler<ErrorEventArgs>(Websocket_Error);

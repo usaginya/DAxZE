@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace DAxZE
@@ -11,6 +12,8 @@ namespace DAxZE
         private const string serverHost = ".moecube.com:10800";
         private WebsocketCore wscore = new WebsocketCore();
 
+        public static string AppName => Application.ProductName;
+        public static string AppVersion => Application.ProductVersion;
         //####################################################
 
         public Form1()
@@ -21,6 +24,11 @@ namespace DAxZE
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            string[] ver = AppVersion.Split('.');
+            Text += $"ver{ver[0]}.{ver[1]}";
+            metroLabel4.Location = new Point(
+                metroLabel4.Location.X + (ver[0].Length + ver[1].Length) * 16 + 41,
+                metroLabel4.Location.Y);
             metroComboBox1.SelectedIndex = 1;
             pictureBox1.Cursor = Cursors.Hand;
         }
@@ -88,5 +96,9 @@ namespace DAxZE
             catch { }
         }
 
+        private void MetroLabel4_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://usaginya.lofter.com");
+        }
     }
 }
