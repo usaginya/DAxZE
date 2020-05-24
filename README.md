@@ -4,7 +4,7 @@
 [![Nuget Costura](https://img.shields.io/badge/nuget-Costura-lightgrey?style=flat-square)](https://github.com/Fody/Costura)
 [![Nuget websocket4net](https://img.shields.io/badge/nuget-websocket4net-lightgrey?style=flat-square)](http://websocket4net.codeplex.com/)
 
-<div align="center"><img src="https://repository-images.githubusercontent.com/266529430/62523f00-9dff-11ea-9d41-f85d77ce6e27" width="720" height="360" /></div>
+<div align="center"><a href="https://usaginya.lofter.com/post/1d56d69b_1c93aa6aa" target="_blank"><img src="https://repository-images.githubusercontent.com/266529430/62523f00-9dff-11ea-9d41-f85d77ce6e27" width="720" height="360" /></a></div>
 
 这是一个東方同人格斗系列游戏联机IP创建工具，类似于shitama，联机服务由MyCard提供。
 
