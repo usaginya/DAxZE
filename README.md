@@ -1,4 +1,4 @@
-# DA☆ZE Readme
+# DA☆ZE
 
 [![license](https://img.shields.io/hexpm/l/plug?style=flat-square)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Nuget Costura](https://img.shields.io/badge/nuget-Costura-lightgrey?style=flat-square)](https://github.com/Fody/Costura)
