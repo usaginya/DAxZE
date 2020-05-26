@@ -11,7 +11,7 @@
 这是一个東方同人格斗系列游戏联机IP创建工具，类似于shitama，联机服务由MyCard提供。
 
 ###### 以下是机翻
-This is a online IP creation tool for touhou fighting game series, similar to shitama. The online service is provided by mycard.
+This is a online ip address get tool for touhou fighting game series, similar to shitama. The online service is provided by mycard.
 
 ## 支持的游戏
 | 日文名  | 中文名  | 代号  |
