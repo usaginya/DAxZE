@@ -1,6 +1,7 @@
 ﻿using SuperSocket.ClientEngine;
 using System;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Timers;
 using WebSocket4Net;
@@ -10,6 +11,7 @@ namespace DAxZE
     public class WebsocketCore
     {
         private IPEndPoint localPoint;
+        private Ping pingTest = new Ping();
 
         private WebSocket webSocket;
         private UDPForwarder uDPForwarder;
@@ -17,8 +19,11 @@ namespace DAxZE
         private Timer timerSendStream;
         private Timer timerCreateConncet;
         private Timer timerCheckReviceState;
+        private Timer timerTestNetworkLatency;
 
         private int reCheckStateCount;
+
+        private string serverIP = string.Empty, serverPort = string.Empty;
 
         public ushort Local_port { get; set; } = 10800;
 
@@ -47,8 +52,8 @@ namespace DAxZE
                 CloseConnect();
 
                 timerCreateConncet = CreateTimer(CreateConnect, null, 500, true);
-
                 timerCheckReviceState = CreateTimer(CheckRecviceState, null);
+                timerTestNetworkLatency = CreateTimer(Test_NetworkLatency, null, 5000, true);
             });
         }
 
@@ -62,8 +67,11 @@ namespace DAxZE
 
             if (webSocket == null)
             {
+                serverIP = serverPort = string.Empty;
                 Form1.MainForm.Invoke(new Action(() =>
                 {
+                    Form1.MainForm.MetroLabelNetworkLatency.Text =
+                        Form1.MainForm.metroTextBox1.Text = string.Empty;
                     Form1.MainForm.MetroLabelState.Text = "正在申请 IP";
                 }));
 
@@ -92,7 +100,7 @@ namespace DAxZE
         /// <summary>
         /// Close connect
         /// </summary>
-        private void CloseConnect()
+        public void CloseConnect()
         {
             if (timerSendStream != null)
             {
@@ -106,7 +114,8 @@ namespace DAxZE
             }
             if (timerCheckReviceState != null)
             {
-                timerCheckReviceState.Enabled = false;
+                timerCheckReviceState.Close();
+                timerCheckReviceState = null;
             }
             if (webSocket != null && (webSocket.State != WebSocketState.Closed || webSocket.State != WebSocketState.Closing))
             {
@@ -117,6 +126,11 @@ namespace DAxZE
                 }
                 webSocket.Close();
                 webSocket = null;
+            }
+            if (timerTestNetworkLatency != null)
+            {
+                timerTestNetworkLatency.Close();
+                timerTestNetworkLatency = null;
             }
         }
 
@@ -159,6 +173,7 @@ namespace DAxZE
                     {
                         Form1.MainForm.MetroLabelState.Text = "等待连接";
                         Form1.MainForm.MetroLabelMessage.Text = "少女离开了游戏，正在等待重连";
+                        Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                     }));
                 }
                 else
@@ -171,11 +186,13 @@ namespace DAxZE
 
                 if (reCheckStateCount < 2)
                 {
+                    serverIP = serverPort = string.Empty;
                     Form1.MainForm.Invoke(new Action(() =>
                     {
-                        Form1.MainForm.metroTextBox1.Text = "";
+                        Form1.MainForm.metroTextBox1.Text = string.Empty;
                         Form1.MainForm.MetroLabelState.Text = "连接断开";
                         Form1.MainForm.MetroLabelMessage.Text = "境界已关闭，需要重新获取";
+                        Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                     }));
                 }
                 else
@@ -202,7 +219,7 @@ namespace DAxZE
             {
                 return;
             }
-            Console.WriteLine(args.Message);
+            //Console.WriteLine(args.Message);
             string[] msgData = args.Message.Split(' ');
             if (msgData.Length > 1)
             {
@@ -215,11 +232,13 @@ namespace DAxZE
                     {
                         Form1.MainForm.MetroLabelState.Text = "申请IP失败";
                         Form1.MainForm.MetroLabelMessage.Text = "没有申请到 IP";
+                        Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                     }));
                     return;
                 }
 
-                string serverIP = ipData[0], serverPort = ipData[1];
+                serverIP = ipData[0];
+                serverPort = ipData[1];
 
                 Form1.MainForm.Invoke(new Action(() =>
                 {
@@ -235,6 +254,7 @@ namespace DAxZE
                             state = "等待连接";
                             Form1.MainForm.metroTextBox1.Text = $"{serverIP}:{serverPort}";
                             Form1.MainForm.MetroLabelMessage.Text = $"正在等待少女连接IP地址：{serverIP}，端口：{serverPort}";
+                            Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                             break;
 
                         case "CONNECT":
@@ -250,6 +270,7 @@ namespace DAxZE
 
                             state = "少女连接中";
                             Form1.MainForm.MetroLabelMessage.Text = "等待少女加入游戏...";
+                            Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
 
                             byte[] buffer = CreateThNetworkStream(Local_port, Convert.ToUInt16(serverPort));
 
@@ -273,6 +294,7 @@ namespace DAxZE
                                 }
                                 state = "连接成功";
                                 Form1.MainForm.MetroLabelMessage.Text = "少女加入了游戏DA☆ZE！";
+                                Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                             }
                             else
                             {
@@ -282,6 +304,7 @@ namespace DAxZE
                                 }
                                 state = "等待连接";
                                 Form1.MainForm.MetroLabelMessage.Text = $"正在等待少女连接IP地址：{serverIP}，端口：{serverPort}";
+                                Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                             }
                             break;
 
@@ -300,6 +323,7 @@ namespace DAxZE
                 {
                     Form1.MainForm.MetroLabelState.Text = "服务器错误";
                     Form1.MainForm.MetroLabelMessage.Text = args.Message;
+                    Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                 }));
             }
         }
@@ -323,8 +347,10 @@ namespace DAxZE
                 Form1.MainForm.metroTextBox1.Text =
                     Form1.MainForm.MetroLabelMessage.Text = string.Empty;
                 Form1.MainForm.MetroLabelState.Text = "少女已离线";
+                Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
             }));
             webSocket = null;
+            serverIP = serverPort = string.Empty;
         }
 
         /// <summary>
@@ -337,9 +363,42 @@ namespace DAxZE
             Form1.MainForm.Invoke(new Action(() =>
             {
                 Form1.MainForm.MetroLabelMessage.Text = args.Exception.Message;
+                Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
             }));
         }
 
+        #endregion
+
+        #region ------------------------------ Test Events ------------------------------
+        /// <summary>
+        /// Test network latency
+        /// </summary>
+        public void Test_NetworkLatency(object source, ElapsedEventArgs elapsedEventArgs, object sourceArgs)
+        {
+            Form1.MainForm.Invoke(new Action(() =>
+            {
+                if (string.IsNullOrWhiteSpace(serverIP))
+                {
+                    Form1.MainForm.MetroLabelNetworkLatency.Text = string.Empty;
+                    return;
+                }
+
+                PingReply reply = pingTest.Send(serverIP);
+                switch (reply.Status)
+                {
+                    case IPStatus.Success:
+                        Form1.MainForm.MetroLabelNetworkLatency.Text =
+                            reply.RoundtripTime.ToString() + Form1.MainForm.MetroLabelNetworkLatency.Tag;
+                        break;
+                    case IPStatus.TimedOut:
+                        Form1.MainForm.MetroLabelNetworkLatency.Text = "超时";
+                        break;
+                    default:
+                        Form1.MainForm.MetroLabelNetworkLatency.Text = "失败";
+                        break;
+                }
+            }));
+        }
         #endregion
 
         #region ----------------------------- Extend Function -----------------------------

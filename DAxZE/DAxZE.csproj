@@ -51,6 +51,9 @@
     <Reference Include="MetroFramework.Fonts, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
       <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="SuperSocket.ClientEngine, Version=0.10.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL">
       <HintPath>..\packages\SuperSocket.ClientEngine.Core.0.10.0\lib\net45\SuperSocket.ClientEngine.dll</HintPath>
     </Reference>
@@ -94,6 +97,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extension\AppSettings.cs" />
+    <Compile Include="Extension\FileHelper.cs" />
+    <Compile Include="Extension\GeneralHelper.cs" />
+    <Compile Include="Extension\WebRequestHelper.cs" />
     <Compile Include="Forms\Form1.cs">
       <SubType>Form</SubType>
     </Compile>

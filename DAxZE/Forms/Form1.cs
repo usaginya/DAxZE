@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DAxZE.Extension;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -9,8 +12,12 @@ namespace DAxZE
         public static Form1 MainForm;
         public static string serverName = string.Empty;
 
-        private const string serverHost = ".moecube.com:10800";
+        private string version = string.Empty;
+        private const string serverMainHost = ".moecube.com:10800";
+
+        private AppSettings settings = new AppSettings();
         private WebsocketCore wscore = new WebsocketCore();
+        private Dictionary<int, string> serverGroup = new Dictionary<int, string>();
 
         public static string AppName => Application.ProductName;
         public static string AppVersion => Application.ProductVersion;
@@ -25,29 +32,90 @@ namespace DAxZE
         private void Form1_Load(object sender, EventArgs e)
         {
             string[] ver = AppVersion.Split('.');
-            Text += $"ver{ver[0]}.{ver[1]}";
+            version = $"{ver[0]}.{ver[1]}";
+            Text += $"ver{version}";
+
             metroLabel4.Location = new Point(
                 metroLabel4.Location.X + (ver[0].Length + ver[1].Length) * 16 + 41,
                 metroLabel4.Location.Y);
-            metroComboBox1.SelectedIndex = 1;
+
+            NotifyIcon1.Text = AppName;
             pictureBox1.Cursor = Cursors.Hand;
+            MetroLabelNetworkLatency.Text = string.Empty;
+
+            CreateServerListGroup();
+
+#pragma warning disable CS4014 // 此调用不会等待
+            settings.CheckUpdate(version, CheckUpdateComplete);
+#pragma warning restore CS4014
         }
 
-        private void MetroComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void CheckUpdateComplete(AppSettings.UpdateInfo updateInfo)
         {
-            switch (metroComboBox1.SelectedIndex)
+            if (!updateInfo.haveUpdate)
+            { return; }
+
+            DialogResult result =
+                MessageBox.Show(
+                this,
+                $"发现新版本，是否更新？" +
+                $"{Environment.NewLine}{AppName} {updateInfo.newVer}" +
+                $"{Environment.NewLine}{updateInfo.updateMsg}",
+                "更新提示",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Asterisk,
+                MessageBoxDefaultButton.Button1);
+
+            if (result == DialogResult.Yes)
             {
+                System.Diagnostics.Process.Start(updateInfo.downloadUrl);
+            }
+        }
 
-                case 0: serverName = $"baka1st{serverHost}"; break;
+        private void CreateServerListGroup()
+        {
+            int i = 0;
+            JArray serverList = settings.GetServerList();
 
-                case 1: serverName = $"baka2nd{serverHost}"; break;
+            if (serverList.Count < 1)
+            {
+                string[] nameArray = { "  北京", "  上海", "  广州", "  深圳" };
+                string[] hostArray =
+                {
+                    $"mt-pek-1{serverMainHost}",
+                    $"mt-sha-1{serverMainHost}",
+                    $"mt-can-1{serverMainHost}",
+                    $"mt-szx-1{serverMainHost}"
+                };
 
-                case 2: serverName = $"baka3rd{serverHost}"; break;
-
+                metroComboBox1.Items.AddRange(nameArray);
+                for (i = 0; i < 4; i++)
+                {
+                    serverGroup.Add(i, hostArray[i]);
+                }
+                return;
             }
 
-            wscore.ConnectToServer();
+            //Create form setting
+            const string keyName = "name";
+            const string keyHost = "host";
+            foreach (JObject server in serverList)
+            {
+                if (!server.ContainsKey(keyName) || !server.ContainsKey(keyHost))
+                { continue; }
+                metroComboBox1.Items.Add($"  {server[keyName]}");
+                serverGroup.Add(i, server[keyHost].ToString());
+                i++;
+            }
 
+            if (i > 0) { metroComboBox1.SelectedIndex = 0; }
+        }
+
+        //####################################################
+        private void MetroComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            serverName = serverGroup[metroComboBox1.SelectedIndex];
+            wscore.ConnectToServer();
         }
 
         private void MetroButton1_Click(object sender, EventArgs e)
@@ -60,14 +128,7 @@ namespace DAxZE
 
         private void PictureBox1_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://usaginya.lofter.com");
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            wscore.Websocket_Closed(null, null);
-            Environment.Exit(Environment.ExitCode);
-            Application.Exit();
+            System.Diagnostics.Process.Start("https://github.com/usaginya/DAxZE");
         }
 
         private void MetroButtonCPort_Click(object sender, EventArgs e)
@@ -98,7 +159,36 @@ namespace DAxZE
 
         private void MetroLabel4_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://usaginya.lofter.com");
+            System.Diagnostics.Process.Start("https://yiu.moest.top");
         }
+
+        private void Form1_Deactivate(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                ShowInTaskbar = false;
+            }
+        }
+
+        private void NotifyIcon1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (WindowState == FormWindowState.Minimized)
+                {
+                    WindowState = FormWindowState.Normal;
+                    ShowInTaskbar = true;
+                    Activate();
+                }
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            wscore.CloseConnect();
+            //Environment.Exit(Environment.ExitCode);
+            //Application.Exit();
+        }
+
     }
 }

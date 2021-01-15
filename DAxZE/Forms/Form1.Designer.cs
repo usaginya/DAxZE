@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroComboBox1 = new MetroFramework.Controls.MetroComboBox();
@@ -41,6 +42,9 @@
             this.MetroTextBoxzCPort = new MetroFramework.Controls.MetroTextBox();
             this.metroButtonCPort = new MetroFramework.Controls.MetroButton();
             this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
+            this.MetroToolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.NotifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.MetroLabelNetworkLatency = new MetroFramework.Controls.MetroLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -62,10 +66,6 @@
             this.metroComboBox1.ForeColor = System.Drawing.Color.Black;
             this.metroComboBox1.FormattingEnabled = true;
             this.metroComboBox1.ItemHeight = 23;
-            this.metroComboBox1.Items.AddRange(new object[] {
-            "  北京",
-            "  杭州",
-            "  广东"});
             this.metroComboBox1.Location = new System.Drawing.Point(363, 73);
             this.metroComboBox1.Name = "metroComboBox1";
             this.metroComboBox1.Size = new System.Drawing.Size(174, 29);
@@ -146,6 +146,7 @@
             this.MetroLabelState.TabIndex = 9;
             this.MetroLabelState.Text = "少女祈祷中";
             this.MetroLabelState.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.MetroLabelState.UseCustomForeColor = true;
             // 
             // MetroLabelMessage
             // 
@@ -168,6 +169,7 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
+            this.MetroToolTip1.SetToolTip(this.pictureBox1, "Goto github ");
             this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click);
             // 
             // metroLabel3
@@ -246,15 +248,44 @@
             this.metroLabel4.Style = MetroFramework.MetroColorStyle.Magenta;
             this.metroLabel4.TabIndex = 11;
             this.metroLabel4.Text = "by YIU";
+            this.MetroToolTip1.SetToolTip(this.metroLabel4, "Goto blog");
             this.metroLabel4.UseCustomForeColor = true;
             this.metroLabel4.UseStyleColors = true;
             this.metroLabel4.Click += new System.EventHandler(this.MetroLabel4_Click);
+            // 
+            // MetroToolTip1
+            // 
+            this.MetroToolTip1.Style = MetroFramework.MetroColorStyle.Magenta;
+            this.MetroToolTip1.StyleManager = null;
+            this.MetroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // NotifyIcon1
+            // 
+            this.NotifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("NotifyIcon1.Icon")));
+            this.NotifyIcon1.Visible = true;
+            this.NotifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1_MouseClick);
+            // 
+            // MetroLabelNetworkLatency
+            // 
+            this.MetroLabelNetworkLatency.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.MetroLabelNetworkLatency.FontSize = MetroFramework.MetroLabelSize.Tall;
+            this.MetroLabelNetworkLatency.FontWeight = MetroFramework.MetroLabelWeight.Regular;
+            this.MetroLabelNetworkLatency.ForeColor = System.Drawing.Color.BlueViolet;
+            this.MetroLabelNetworkLatency.Location = new System.Drawing.Point(255, 205);
+            this.MetroLabelNetworkLatency.Name = "MetroLabelNetworkLatency";
+            this.MetroLabelNetworkLatency.Size = new System.Drawing.Size(102, 23);
+            this.MetroLabelNetworkLatency.TabIndex = 12;
+            this.MetroLabelNetworkLatency.Tag = "ms";
+            this.MetroLabelNetworkLatency.Text = "ms";
+            this.MetroLabelNetworkLatency.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.MetroLabelNetworkLatency.UseCustomForeColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(560, 307);
+            this.Controls.Add(this.MetroLabelNetworkLatency);
             this.Controls.Add(this.metroLabel4);
             this.Controls.Add(this.metroButtonCPort);
             this.Controls.Add(this.MetroTextBoxzCPort);
@@ -277,6 +308,7 @@
             this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Style = MetroFramework.MetroColorStyle.Magenta;
             this.Text = "DA☆ZE  ";
+            this.Deactivate += new System.EventHandler(this.Form1_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -298,6 +330,9 @@
         internal MetroFramework.Controls.MetroButton metroButtonCPort;
         internal MetroFramework.Controls.MetroComboBox metroComboBox1;
         private MetroFramework.Controls.MetroLabel metroLabel4;
+        internal MetroFramework.Components.MetroToolTip MetroToolTip1;
+        private System.Windows.Forms.NotifyIcon NotifyIcon1;
+        internal MetroFramework.Controls.MetroLabel MetroLabelNetworkLatency;
     }
 }
 
