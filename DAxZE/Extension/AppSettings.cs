@@ -53,36 +53,31 @@ namespace DAxZE.Extension
         public async Task CheckUpdate(string version, CheckUpdateDelegate checkDelegate)
         {
             await Task.Run(() =>
-          {
-              UpdateInfo updateInfo = new UpdateInfo();
-              if (settings == null || ((JObject)settings).Count < 1)
-              {
-                  checkDelegate(updateInfo);
-                  return;
-              }
+            {
+                string updateUrl = defaultUpdateUrl;
+                UpdateInfo updateInfo = new UpdateInfo();
 
-              string updateUrl = settings.update;
-              if (string.IsNullOrWhiteSpace(updateUrl))
-              {
-                  updateUrl = defaultUpdateUrl;
-              }
+                if (settings != null && ((JObject)settings).Count > 0 && ((JObject)settings).ContainsKey("update"))
+                {
+                    updateUrl = ((JToken)settings.update).ToString().Length > 7 ? settings.update : updateUrl;
+                }
 
-              string data = WebRequestHelper.HttpGet(updateUrl);
-              updateInfo.downloadUrl = GeneralHelper.FindBetweenString(data, "[dl>", "<dl]").Trim();
-              updateInfo.newVer = GeneralHelper.FindBetweenString(data, "[ver>", "<ver]");
-              updateInfo.newVer = updateInfo.newVer.Replace(".", string.Empty);
-              version = version.Replace(".", string.Empty);
-              try
-              {
-                  if (Convert.ToUInt32(updateInfo.newVer) > Convert.ToUInt32(version) && updateInfo.downloadUrl.Length > 7)
-                  {
-                      updateInfo.haveUpdate = true;
-                      updateInfo.updateMsg = GeneralHelper.FindBetweenString(data, "[msg>", "<msg]");
-                  }
-              }
-              catch { }
-              checkDelegate(updateInfo);
-          });
+                string data = WebRequestHelper.HttpGet(updateUrl);
+                updateInfo.downloadUrl = GeneralHelper.FindBetweenString(data, "[dl>", "<dl]").Trim();
+                updateInfo.newVer = GeneralHelper.FindBetweenString(data, "[ver>", "<ver]");
+                updateInfo.newVer = updateInfo.newVer.Replace(".", string.Empty);
+                version = version.Replace(".", string.Empty);
+                try
+                {
+                    if (Convert.ToUInt32(updateInfo.newVer) > Convert.ToUInt32(version) && updateInfo.downloadUrl.Length > 7)
+                    {
+                        updateInfo.haveUpdate = true;
+                        updateInfo.updateMsg = GeneralHelper.FindBetweenString(data, "[msg>", "<msg]");
+                    }
+                }
+                catch { }
+                checkDelegate(updateInfo);
+            });
         }
 
         /// <summary>
@@ -100,6 +95,26 @@ namespace DAxZE.Extension
             }
             catch { }
             return serverList;
+        }
+
+        /// <summary>
+        /// 取第一次选择服务器表
+        /// </summary>
+        public int GetFirstServer(int serverCount)
+        {
+            int firstInt = -1;
+            try
+            {
+                if (serverCount < 1)
+                { return firstInt; }
+
+                if (((JObject)settings).ContainsKey("first"))
+                { firstInt = settings.first; }
+
+                firstInt = firstInt < 0 ? 0 : firstInt >= serverCount ? serverCount - 1 : firstInt;
+            }
+            catch { }
+            return firstInt;
         }
 
     }

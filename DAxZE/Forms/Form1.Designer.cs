@@ -133,7 +133,6 @@
             this.metroButton1.UseCustomBackColor = true;
             this.metroButton1.UseCustomForeColor = true;
             this.metroButton1.UseSelectable = true;
-            this.metroButton1.UseStyleColors = true;
             this.metroButton1.Click += new System.EventHandler(this.MetroButton1_Click);
             // 
             // MetroLabelState
@@ -255,6 +254,11 @@
             // 
             // MetroToolTip1
             // 
+            this.MetroToolTip1.AutomaticDelay = 200;
+            this.MetroToolTip1.AutoPopDelay = 8000;
+            this.MetroToolTip1.InitialDelay = 200;
+            this.MetroToolTip1.ReshowDelay = 40;
+            this.MetroToolTip1.StripAmpersands = true;
             this.MetroToolTip1.Style = MetroFramework.MetroColorStyle.Magenta;
             this.MetroToolTip1.StyleManager = null;
             this.MetroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;

@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DAxZE
@@ -45,9 +46,9 @@ namespace DAxZE
 
             CreateServerListGroup();
 
-#pragma warning disable CS4014 // 此调用不会等待
+#pragma warning disable CS4014 // 异步检查更新
             settings.CheckUpdate(version, CheckUpdateComplete);
-#pragma warning restore CS4014
+#pragma warning restore CS4014 // 异步检查更新
         }
 
         private void CheckUpdateComplete(AppSettings.UpdateInfo updateInfo)
@@ -93,10 +94,11 @@ namespace DAxZE
                 {
                     serverGroup.Add(i, hostArray[i]);
                 }
+                metroComboBox1.SelectedIndex = 1;
                 return;
             }
 
-            //Create form setting
+            //Create form setting file
             const string keyName = "name";
             const string keyHost = "host";
             foreach (JObject server in serverList)
@@ -107,23 +109,52 @@ namespace DAxZE
                 serverGroup.Add(i, server[keyHost].ToString());
                 i++;
             }
+            metroComboBox1.SelectedIndex = settings.GetFirstServer(i);
 
-            if (i > 0) { metroComboBox1.SelectedIndex = 0; }
+            if (i < 1)
+            {
+                MetroLabelState.Text = "少女休息中";
+                metroComboBox1.Items.Add("  无服务器配置");
+                metroComboBox1.SelectedIndex = 0;
+            }
         }
 
         //####################################################
         private void MetroComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (serverGroup.Count < 1)
+            { return; }
+
             serverName = serverGroup[metroComboBox1.SelectedIndex];
             wscore.ConnectToServer();
         }
 
         private void MetroButton1_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(metroTextBox1.Text))
-            {
-                Clipboard.SetText(metroTextBox1.Text);
-            }
+            if (string.IsNullOrWhiteSpace(metroTextBox1.Text))
+            { return; }
+
+            Clipboard.SetText(metroTextBox1.Text);
+
+            #region - Async change button text -
+            if (metroButton1.Tag != null)
+            { return; }
+
+            metroButton1.Tag = Task.Factory.StartNew(async () =>
+           {
+               string oldText = metroButton1.Text;
+               Invoke(new Action(() =>
+               {
+                   metroButton1.Text = $"已{oldText}";
+               }));
+               await Task.Delay(1000);
+               Invoke(new Action(() =>
+               {
+                   metroButton1.Text = oldText;
+                   metroButton1.Tag = null;
+               }));
+           });
+            #endregion
         }
 
         private void PictureBox1_Click(object sender, EventArgs e)
@@ -133,6 +164,9 @@ namespace DAxZE
 
         private void MetroButtonCPort_Click(object sender, EventArgs e)
         {
+            if (serverGroup.Count < 1)
+            { return; }
+
             try
             {
                 wscore.Local_port = Convert.ToUInt16(MetroTextBoxzCPort.Text);
@@ -178,16 +212,20 @@ namespace DAxZE
                 {
                     WindowState = FormWindowState.Normal;
                     ShowInTaskbar = true;
-                    Activate();
                 }
+                Activate();
             }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             wscore.CloseConnect();
-            //Environment.Exit(Environment.ExitCode);
-            //Application.Exit();
+        }
+
+        //##################################
+        public void ShowToolTip(Control control, string caption)
+        {
+            MetroToolTip1.SetToolTip(control, $"  {caption}  ");
         }
 
     }

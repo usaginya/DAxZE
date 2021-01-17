@@ -173,7 +173,7 @@ namespace DAxZE
                     {
                         Form1.MainForm.MetroLabelState.Text = "等待连接";
                         Form1.MainForm.MetroLabelMessage.Text = "少女离开了游戏，正在等待重连";
-                        Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
+                        Form1.MainForm.ShowToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                     }));
                 }
                 else
@@ -192,7 +192,7 @@ namespace DAxZE
                         Form1.MainForm.metroTextBox1.Text = string.Empty;
                         Form1.MainForm.MetroLabelState.Text = "连接断开";
                         Form1.MainForm.MetroLabelMessage.Text = "境界已关闭，需要重新获取";
-                        Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
+                        Form1.MainForm.ShowToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                     }));
                 }
                 else
@@ -232,7 +232,7 @@ namespace DAxZE
                     {
                         Form1.MainForm.MetroLabelState.Text = "申请IP失败";
                         Form1.MainForm.MetroLabelMessage.Text = "没有申请到 IP";
-                        Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
+                        Form1.MainForm.ShowToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                     }));
                     return;
                 }
@@ -254,7 +254,7 @@ namespace DAxZE
                             state = "等待连接";
                             Form1.MainForm.metroTextBox1.Text = $"{serverIP}:{serverPort}";
                             Form1.MainForm.MetroLabelMessage.Text = $"正在等待少女连接IP地址：{serverIP}，端口：{serverPort}";
-                            Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
+                            Form1.MainForm.ShowToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                             break;
 
                         case "CONNECT":
@@ -270,7 +270,7 @@ namespace DAxZE
 
                             state = "少女连接中";
                             Form1.MainForm.MetroLabelMessage.Text = "等待少女加入游戏...";
-                            Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
+                            Form1.MainForm.ShowToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
 
                             byte[] buffer = CreateThNetworkStream(Local_port, Convert.ToUInt16(serverPort));
 
@@ -294,7 +294,7 @@ namespace DAxZE
                                 }
                                 state = "连接成功";
                                 Form1.MainForm.MetroLabelMessage.Text = "少女加入了游戏DA☆ZE！";
-                                Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
+                                Form1.MainForm.ShowToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                             }
                             else
                             {
@@ -304,7 +304,7 @@ namespace DAxZE
                                 }
                                 state = "等待连接";
                                 Form1.MainForm.MetroLabelMessage.Text = $"正在等待少女连接IP地址：{serverIP}，端口：{serverPort}";
-                                Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
+                                Form1.MainForm.ShowToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                             }
                             break;
 
@@ -323,7 +323,7 @@ namespace DAxZE
                 {
                     Form1.MainForm.MetroLabelState.Text = "服务器错误";
                     Form1.MainForm.MetroLabelMessage.Text = args.Message;
-                    Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
+                    Form1.MainForm.ShowToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
                 }));
             }
         }
@@ -342,15 +342,19 @@ namespace DAxZE
         /// <param name="args"></param>
         public void Websocket_Closed(object sender, EventArgs args)
         {
-            Form1.MainForm.Invoke(new Action(() =>
+            try
             {
-                Form1.MainForm.metroTextBox1.Text =
-                    Form1.MainForm.MetroLabelMessage.Text = string.Empty;
-                Form1.MainForm.MetroLabelState.Text = "少女已离线";
-                Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
-            }));
-            webSocket = null;
-            serverIP = serverPort = string.Empty;
+                Form1.MainForm.Invoke(new Action(() =>
+                {
+                    Form1.MainForm.metroTextBox1.Text =
+                        Form1.MainForm.MetroLabelMessage.Text = string.Empty;
+                    Form1.MainForm.MetroLabelState.Text = "少女已离线";
+                    Form1.MainForm.ShowToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
+                }));
+                webSocket = null;
+                serverIP = serverPort = string.Empty;
+            }
+            catch { }
         }
 
         /// <summary>
@@ -363,7 +367,7 @@ namespace DAxZE
             Form1.MainForm.Invoke(new Action(() =>
             {
                 Form1.MainForm.MetroLabelMessage.Text = args.Exception.Message;
-                Form1.MainForm.MetroToolTip1.SetToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
+                Form1.MainForm.ShowToolTip(Form1.MainForm.MetroLabelMessage, Form1.MainForm.MetroLabelMessage.Text);
             }));
         }
 

@@ -139,6 +139,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\notify.ico" />
     <None Include="Resources\638.jpg" />
     <Content Include="Resources\DAxZE.ico" />
   </ItemGroup>
