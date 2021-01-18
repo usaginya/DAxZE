@@ -62,14 +62,15 @@ namespace DAxZE.Extension
                     updateUrl = ((JToken)settings.update).ToString().Length > 7 ? settings.update : updateUrl;
                 }
 
+                string newver = "0";
                 string data = WebRequestHelper.HttpGet(updateUrl);
                 updateInfo.downloadUrl = GeneralHelper.FindBetweenString(data, "[dl>", "<dl]").Trim();
                 updateInfo.newVer = GeneralHelper.FindBetweenString(data, "[ver>", "<ver]");
-                updateInfo.newVer = updateInfo.newVer.Replace(".", string.Empty);
+                newver = updateInfo.newVer.Replace(".", string.Empty);
                 version = version.Replace(".", string.Empty);
                 try
                 {
-                    if (Convert.ToUInt32(updateInfo.newVer) > Convert.ToUInt32(version) && updateInfo.downloadUrl.Length > 7)
+                    if (Convert.ToUInt32(newver) > Convert.ToUInt32(version) && updateInfo.downloadUrl.Length > 7)
                     {
                         updateInfo.haveUpdate = true;
                         updateInfo.updateMsg = GeneralHelper.FindBetweenString(data, "[msg>", "<msg]");

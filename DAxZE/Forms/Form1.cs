@@ -60,7 +60,7 @@ namespace DAxZE
                 MessageBox.Show(
                 this,
                 $"发现新版本，是否更新？" +
-                $"{Environment.NewLine}{AppName} {updateInfo.newVer}" +
+                $"{Environment.NewLine}{Environment.NewLine}{AppName} {updateInfo.newVer}" +
                 $"{Environment.NewLine}{updateInfo.updateMsg}",
                 "更新提示",
                 MessageBoxButtons.YesNo,

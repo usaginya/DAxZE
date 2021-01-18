@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Cache;
 using System.Text;
 
 namespace DAxZE.Extension
@@ -18,6 +19,7 @@ namespace DAxZE.Extension
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
                 request.Method = "GET";
                 request.ContentType = "text/html;charset=UTF-8";
+                request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream myResponseStream = response.GetResponseStream();
                 StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
