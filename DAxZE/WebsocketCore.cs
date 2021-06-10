@@ -2,6 +2,7 @@
 using System;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 using System.Timers;
 using WebSocket4Net;
@@ -77,9 +78,11 @@ namespace DAxZE
 
                 localPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), Local_port);
 
-                webSocket = new WebSocket($"wss://{Form1.serverName}", null, null, null,
-                    $"{Form1.AppName}/{Form1.AppVersion}"
-                    );
+                webSocket = new WebSocket(
+                    uri: $"wss://{Form1.serverName}",
+                    userAgent: $"{Form1.AppName}/{Form1.AppVersion}",
+                    sslProtocols: SslProtocols.Tls12 | SslProtocols.Default);
+
                 webSocket.Opened += new EventHandler(Websocket_Opened);
                 webSocket.Error += new EventHandler<ErrorEventArgs>(Websocket_Error);
                 webSocket.Closed += new EventHandler(Websocket_Closed);
